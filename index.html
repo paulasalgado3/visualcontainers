@@ -1,0 +1,53 @@
+<html>
+<head></head>
+<body onload="refreshContainers();"></body>
+<div id="contenedores" style="width:100%; height: 100%"></div>
+<script>
+	function refreshContainers(){
+		var http = new XMLHttpRequest();
+		var url = "http://10.105.231.108:2376/containers/json";
+		http.open("GET", url);
+		http.onreadystatechange = function() {
+			if(http.readyState == 4) {
+            //console.log("response 4: " + http.responseText);
+            rta = JSON.parse(http.responseText);
+            //console.log("respuesta JSON: "+ rta);
+
+			rta.forEach(function(element) {
+
+				if(element.Image == "websrvvar" && element.State == "running"){
+				//	console.log(element.Ports[0].PublicPort);
+				//	console.log(element.Id);
+					crearIframe("http://10.105.231.108:"+element.Ports[0].PublicPort,element.Id );
+				}
+  				
+			});
+
+        	} else {
+            	//console.log("state " + http.readyState);
+        	}
+    	};
+    	http.send();
+	}
+
+
+
+	function crearIframe(src,id){
+		var ifrm = document.createElement('iframe');
+		ifrm.setAttribute('id', 'ifrm'); // assign an id
+
+		//document.body.appendChild(ifrm); // to place at end of document
+
+		// to place before another page element
+		var el = document.getElementById('contenedores');
+		el.parentNode.insertBefore(ifrm, el);
+
+		// assign url
+		ifrm.setAttribute('src', src);
+
+
+	}
+
+
+</script>
+</html>
